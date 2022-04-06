@@ -20,11 +20,11 @@ import java.awt.event.*;
 //     }
 // }
 
-public class window extends Frame{
+public class Window extends Frame{
 
     private Button submit;
     
-    public window(){	
+    public Window(){	
 		this.setLayout(new GridLayout(3,2));
 		submit = new Button("Submit");
 		submit.addActionListener(new ActionListener() {

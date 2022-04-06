@@ -2,14 +2,14 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class crypto_currency extends currencies{
+public class CryptoCurrency extends Currency{
     private JSONObject data;
     // Ticker is the shorthand for a currency such as GBP or BTC
-    public crypto_currency(String ticker) {
+    public CryptoCurrency(String ticker) {
         // Get information from the api and parse it 
         JSONObject data;
         try {
-            data = api_get.send_request("ids=" + ticker + "&interval=1h&convert=GBP");
+            data = ApiAccess.send_request("ids=" + ticker + "&interval=1h&convert=GBP");
             double price = Double.parseDouble(data.getString("price"));
             // Rounding price to 2 decimal places
             price = Math.round(price * 100.0) / 100.0;
@@ -25,8 +25,4 @@ public class crypto_currency extends currencies{
             e.printStackTrace();
         }
     }
-
-    
-
-
 }

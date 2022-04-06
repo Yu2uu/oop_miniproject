@@ -1,14 +1,13 @@
 import java.util.ArrayList;
-
 import org.json.JSONArray;
 
-public class user {
+public class User {
     private String name; // might remove name from class
     // private String password;
     private ArrayList<String> information = new ArrayList<String>();
-    private ArrayList<crypto_currency> currency_list = new ArrayList<crypto_currency>();
+    private ArrayList<CryptoCurrency> currency_list = new ArrayList<CryptoCurrency>();
 
-    public user(String name){
+    public User(String name){
 	    this.name = name;
         this.information = new ArrayList<String>();
     }
@@ -21,7 +20,7 @@ public class user {
         return this.information;
     }
 
-    public ArrayList<crypto_currency> get_currencies_list() {
+    public ArrayList<CryptoCurrency> get_currencies_list() {
         return this.currency_list;
     }
 
@@ -34,7 +33,7 @@ public class user {
         information.add("circulating_supply");
     }
 
-    public void add_currency(crypto_currency currency){
+    public void add_currency(CryptoCurrency currency){
         this.currency_list.add(currency);
     }
     

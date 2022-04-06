@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
-public class premium_user extends user {
+public class PremiumUser extends User {
 
     private String name; // might remove name from class
     private ArrayList<String> information;
 
-    public premium_user(String name){
+    public PremiumUser(String name){
         super(name);
     }
 

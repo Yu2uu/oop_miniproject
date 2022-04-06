@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class fileIO {
+public class FileIO {
     
     public static void newFile(String fileName) {
 

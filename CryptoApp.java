@@ -8,11 +8,11 @@ import java.util.Scanner;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Crypto_app extends Frame{
+public class CryptoApp extends Frame{
   private Panel info_panel;
   private Panel toolbar;
   private static TextArea infoArea = new TextArea("CyptoTrading App \n- Select a currency to veiw information about it \n - More information is avaialbe to premium users");
-  private user User;
+  private User User;
   private String account_type;
   
     // Overriding print function to output text
@@ -34,11 +34,11 @@ public class Crypto_app extends Frame{
      * TODO ADD A ADD CURRENCY BUTTON 
     */
     public static JSONObject send_request(String params)throws IOException, InterruptedException, JSONException{
-      JSONObject data = api_get.send_request(params);
+      JSONObject data = ApiAccess.send_request(params);
       return data;
-  }
+    }
 
-    // MD5 Hash a string to keep it secret
+    // MD5 Hash a string to keep stored passwords secret
     public static String hash(String text){
       try {
         MessageDigest msgDst = MessageDigest.getInstance("MD5");  
@@ -55,12 +55,12 @@ public class Crypto_app extends Frame{
         while (hshtxt.length() < 32) {  
           hshtxt = "0" + hshtxt;  
         }  
-        return hshtxt; }
-        catch (NoSuchAlgorithmException error)   
-        {  
-          throw new RuntimeException(error);  
-        }  
+        return hshtxt; 
       }
+      catch (NoSuchAlgorithmException error) {  
+        throw new RuntimeException(error);  
+      }  
+    }
     
     public static String inputString(String message) {
       System.out.println(message);
@@ -71,7 +71,7 @@ public class Crypto_app extends Frame{
     }
     // TODO MAKE WORK
     public void add_currency(String ticker) {
-      crypto_currency coin = new crypto_currency(ticker);
+      CryptoCurrency coin = new CryptoCurrency(ticker);
       Button btn = new Button(ticker);	
       btn.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent evt){
@@ -84,7 +84,7 @@ public class Crypto_app extends Frame{
     /**
      * Enter class constructer below with frame builder
      */
-    public Crypto_app(){
+    public CryptoApp(){
       this.setLayout(new FlowLayout());
 
         // window thing = new window();
@@ -93,12 +93,12 @@ public class Crypto_app extends Frame{
       if (account_creation == 0){
         for (boolean taken = true; taken == true;){
           String username = inputString("What is your username");
-          if (fileIO.fileSearch("credentials.csv", username)){
+          if (FileIO.fileSearch("credentials.csv", username)){
             System.out.println("Sorry that username is already taken can you choose another");
             taken = true;
           } else {
             taken = false;
-            user User = new user(username);
+            User user = new User(username);
             String password = inputString("What is your password");
             // User.setPassword(password);
             password = hash(password);
@@ -106,7 +106,7 @@ public class Crypto_app extends Frame{
             do {String account_type = inputString("What is your account type (normal/premium)");} 
             while (!(account_type.equals("normal") || account_type.equals("premium")));
             String data = "\n Username: " + username + " Password: " + password + " Account Type: " + account_type;
-            fileIO.writeFile("credentials.csv", data);
+            FileIO.writeFile("credentials.csv", data);
           }
         }
       } 
@@ -115,15 +115,15 @@ public class Crypto_app extends Frame{
         while(valid == false){
           // Verify client details
           String username = inputString("What is your username");
-          if (fileIO.fileSearch("credentials.csv", username)){
+          if (FileIO.fileSearch("credentials.csv", username)){
             String password = inputString("What is your password");
-            if (fileIO.fileSearch("credentials.csv", username + " Password: " + hash(password))){
+            if (FileIO.fileSearch("credentials.csv", username + " Password: " + hash(password))){
               System.out.println("Login successful");
               // TODO sort out this user shit
-              User = new user(username);
-              User.add_currency(new crypto_currency("BTC")); // TODO PRBLM HERE
-              User.add_currency(new crypto_currency("ETH"));
-              User.add_currency(new crypto_currency("XRP"));
+              User = new User(username);
+              User.add_currency(new CryptoCurrency("BTC")); // TODO PRBLM HERE
+              User.add_currency(new CryptoCurrency("ETH"));
+              User.add_currency(new CryptoCurrency("XRP"));
               valid = true;
             } else {
               System.out.println("Login unsuccessful");
@@ -169,7 +169,7 @@ public class Crypto_app extends Frame{
         currency.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent evt){
             // TODO replace coin name
-            crypto_currency coin = User.get_currencies_list().get(currency_index);
+            CryptoCurrency coin = User.get_currencies_list().get(currency_index);
             // Get information from the api and parse it 
             // JSONObject data = send_request("ids=BTC&interval=1h&convert=GBP");
             // double price = Double.parseDouble(data.getString("price"));
@@ -233,6 +233,6 @@ public class Crypto_app extends Frame{
     }
 
     public static void main(String[] args){
-		new Crypto_app();
-    }
+		new CryptoApp();
+  }
 }
