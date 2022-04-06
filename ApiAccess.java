@@ -26,12 +26,6 @@ public class ApiAccess {
         // use the client to send the request
         var data = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // a delay so that too many requests arent sent to the server, only allowed 1 request per sec
-        try {
-            Thread.sleep(100);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
         // the parse the response:
         JSONObject json_object = new JSONObject(data.body().substring(1, data.body().length() - 1)); // converting returned json array into object
         return json_object;

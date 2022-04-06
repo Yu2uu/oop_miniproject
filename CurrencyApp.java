@@ -8,12 +8,11 @@ import java.util.Scanner;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CryptoApp extends Frame{
+public class CurrencyApp extends Frame{
   private Panel info_panel;
   private Panel toolbar;
   private static TextArea infoArea = new TextArea("CyptoTrading App \n- Select a currency to veiw information about it \n - More information is avaialbe to premium users");
-  private User User;
-  private String account_type;
+  private User current_user;
   
     // Overriding print function to output text
     public static void print(String text){
@@ -21,7 +20,7 @@ public class CryptoApp extends Frame{
       }  
 
     /**  
-     * TODO CHANGE CRYPTO APP NAME TO CURRENCY APP
+     *  CHANGE CRYPTO APP NAME TO CURRENCY APP -- Done
      * 
      * TODO ADD CURRENCY INFO INTO A OBJECT TO REDUCE LOAD TIMES, DO OVERRIDING AND INHERITANCE --
      * 
@@ -29,9 +28,15 @@ public class CryptoApp extends Frame{
      * 
      * TODO ADD REFRESH BUTTON TO GET UP TO DATE INFO
      * 
-     * TODO MAYBE MAKE IT SO ONLY ONE BUTTON IS NEEDED AND IS LOOPED THROUGH FOR ALL CURRENCIES
+     *  MAYBE MAKE IT SO ONLY ONE BUTTON IS NEEDED AND IS LOOPED THROUGH FOR ALL CURRENCIES -- Done
      * 
-     * TODO ADD A ADD CURRENCY BUTTON 
+     *  ADD A ADD CURRENCY BUTTON -- Done
+     * 
+     * TODO ADD VALIDATION TO ADD CURRENCY BUTTON
+     * 
+     *  RENAME CLASSES TO FOLLOW GUIDLINES -- Done
+     * 
+     *  HANDLE EXCEPTIONS -- Done
     */
     public static JSONObject send_request(String params)throws IOException, InterruptedException, JSONException{
       JSONObject data = ApiAccess.send_request(params);
@@ -65,66 +70,63 @@ public class CryptoApp extends Frame{
     public static String inputString(String message) {
       System.out.println(message);
       Scanner scanner = new Scanner(System.in);
-      String answer = scanner.nextLine();
-        
+      String answer = scanner.nextLine(); 
       return answer;
     }
-    // TODO MAKE WORK
+
     public void add_currency(String ticker) {
       CryptoCurrency coin = new CryptoCurrency(ticker);
       Button btn = new Button(ticker);	
       btn.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent evt){
-          print("The currency is " + coin.get_name() + " \n BTC to GBP: £" + coin.get_price());
+          print("The currency is " + coin.get_name() + " \n " + ticker + " to GBP: £" + coin.get_price());
         }
       });
       toolbar.add(btn);	
       this.setVisible(true);
     }
+
     /**
      * Enter class constructer below with frame builder
      */
-    public CryptoApp(){
+    public CurrencyApp(){
       this.setLayout(new FlowLayout());
 
         // window thing = new window();
         // thing.activate(); will do this once base is done
-      int account_creation = Integer.parseInt(inputString("Do you have a account with us? \n Input 1 for Yes and 0 for No")); 
-      if (account_creation == 0){
-        for (boolean taken = true; taken == true;){
+      String account_creation, account_type = "";
+      do {account_creation = inputString("Do you have a account with us? \n Input Yes or No").toUpperCase();}
+      while(!(account_creation.equals("YES") || account_creation.equals("NO")));
+      while(true){
+        if (account_creation.equals("NO")){
           String username = inputString("What is your username");
           if (FileIO.fileSearch("credentials.csv", username)){
             System.out.println("Sorry that username is already taken can you choose another");
-            taken = true;
+            continue;
           } else {
-            taken = false;
-            User user = new User(username);
-            String password = inputString("What is your password");
-            // User.setPassword(password);
-            password = hash(password);
+            current_user = new User(username);
+            String password =  hash(inputString("What is your password"));
+
             // Keep asking for account type till valid response is entered
-            do {String account_type = inputString("What is your account type (normal/premium)");} 
+            do {account_type = inputString("What is your account type (normal/premium)");} 
             while (!(account_type.equals("normal") || account_type.equals("premium")));
-            String data = "\n Username: " + username + " Password: " + password + " Account Type: " + account_type;
-            FileIO.writeFile("credentials.csv", data);
+
+            String credentials = "\n Username: " + username + " Password: " + password + " Account Type: " + account_type;
+            FileIO.writeFile("credentials.csv", credentials);
+            System.out.println("\nLogging in");
+            break;
           }
-        }
-      } 
-      else {
-        boolean valid = false;
-        while(valid == false){
+        
+        } else if (account_creation.equals("YES")) {
           // Verify client details
           String username = inputString("What is your username");
           if (FileIO.fileSearch("credentials.csv", username)){
             String password = inputString("What is your password");
             if (FileIO.fileSearch("credentials.csv", username + " Password: " + hash(password))){
               System.out.println("Login successful");
+              current_user = new User(username);
               // TODO sort out this user shit
-              User = new User(username);
-              User.add_currency(new CryptoCurrency("BTC")); // TODO PRBLM HERE
-              User.add_currency(new CryptoCurrency("ETH"));
-              User.add_currency(new CryptoCurrency("XRP"));
-              valid = true;
+              break;
             } else {
               System.out.println("Login unsuccessful");
             }
@@ -133,7 +135,12 @@ public class CryptoApp extends Frame{
           }
         }
       }
-      System.out.println();
+      
+      // Create initial buttons
+      current_user.add_currency(new CryptoCurrency("BTC")); // TODO PRBLM HERE
+      current_user.add_currency(new CryptoCurrency("ETH"));
+      current_user.add_currency(new CryptoCurrency("XRP"));
+
       toolbar = new Panel();
       toolbar.setLayout(new FlowLayout());
       toolbar.setVisible(true);
@@ -163,18 +170,13 @@ public class CryptoApp extends Frame{
       });
       this.add(addCurrencyButton);
       
-      for (int i = 0; i < User.get_currencies_list().size(); i++) {
+      for (int i = 0; i < current_user.get_currencies_list().size(); i++) {
         int currency_index = i; // needed for arraylist get as it needs a effectivly final varaible
-        Button currency = new Button(User.get_currencies_list().get(currency_index).get_currency_ticker());
+        Button currency = new Button(current_user.get_currencies_list().get(currency_index).get_currency_ticker());
         currency.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent evt){
             // TODO replace coin name
-            CryptoCurrency coin = User.get_currencies_list().get(currency_index);
-            // Get information from the api and parse it 
-            // JSONObject data = send_request("ids=BTC&interval=1h&convert=GBP");
-            // double price = Double.parseDouble(data.getString("price"));
-            // Rounding price to 2 decimal places
-            // price = Math.round(price * 100.0) / 100.0;
+            CryptoCurrency coin = current_user.get_currencies_list().get(currency_index);
             print("The currency is " + coin.get_name() + " \n BTC to GBP: £" + coin.get_price());
             
           }
@@ -182,47 +184,14 @@ public class CryptoApp extends Frame{
         toolbar.add(currency);
       }
 
-      // Button Etherium = new Button("ETH");
-      // Etherium.addActionListener(new ActionListener(){
-      //   public void actionPerformed(ActionEvent evt){
-      //     try {
-      //       // Get information from the api and parse it 
-      //       JSONObject data = send_request("ids=ETH&interval=1h&convert=GBP");
-      //       double price = Double.parseDouble(data.getString("price"));
-      //       // Rounding price to 2 decimal places
-      //       price = Math.round(price * 100.0) / 100.0;
-      //       print("ETH to GBP: £" + price);
-      //     } catch (Exception e) {
-      //       e.printStackTrace();
-      //     }
-      //   }
-      // });
-      //   toolbar.add(Etherium); 
-
-      // Button Ripple = new Button("XRP");
-      // Ripple.addActionListener(new ActionListener(){
-      //   public void actionPerformed(ActionEvent evt){
-      //     try {
-      //       // Get information from the api and parse it 
-      //       JSONObject data = send_request("ids=XRP&interval=1h&convert=GBP");
-      //       double price = Double.parseDouble(data.getString("price"));
-      //       // Rounding price to 2 decimal places
-      //       price = Math.round(price * 100.0) / 100.0;
-      //       print("XRP to GBP: £" + price);
-      //     } catch (Exception e) {
-      //       e.printStackTrace();
-      //     }
-      //   }
-      // });
-      // toolbar.add(Ripple);
       infoArea.setEditable(false);
 		  this.add(infoArea,  BorderLayout.PAGE_END);	
 
       WindowCloser wc = new WindowCloser();
       this.addWindowListener(wc);
-      this.setSize(600,500);// Self explanatory
+      this.setSize(600,500);
       this.setLocationRelativeTo(null); // Centers the window on the screen
-      this.setVisible(true);// Self explanatory
+      this.setVisible(true);
 
       info_panel = new Panel();
       info_panel.setLayout(new GridLayout(0,1));
@@ -233,6 +202,6 @@ public class CryptoApp extends Frame{
     }
 
     public static void main(String[] args){
-		new CryptoApp();
+		new CurrencyApp();
   }
 }
