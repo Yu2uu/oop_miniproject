@@ -9,7 +9,8 @@ public class CryptoCurrency extends Currency{
         // Get information from the api and parse it into variables
 
         // a loop so that too many requests arent sent to the server, free api only allows 1 request per sec
-        while(true) {
+        // After 5 loops it returns that the request was incorrect
+        for (int i = 0; i < 5; i++) {
             try {
                 this.data = ApiAccess.send_request("ids=" + ticker + "&interval=1h&convert=GBP");
                 double price = Double.parseDouble(data.getString("price"));

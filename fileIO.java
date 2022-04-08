@@ -21,7 +21,6 @@ public class FileIO {
         }
     }   
 
-//  --- CHANGE BELOW ---
 
     // This method reads text from the file
     public static String readFile(String fileName) {
