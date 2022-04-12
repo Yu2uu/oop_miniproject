@@ -9,7 +9,7 @@ import org.json.JSONObject;
 // import org.json.JSONArray; for arrays
 import org.json.JSONException;
 
-public class ApiAccess {
+public class ApiAccess{
     private static String base_url = "https://api.nomics.com/v1/";
     private static String api_key = "f0de9f36e0316eea5b78c51093602a00b9a86976";
 

@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class User {
+public class User{
     private String name; // might remove name from class
     protected ArrayList<String> information = new ArrayList<String>(); // BRUNO QUESTION ABOUT THIS PRETECTED VARAIBLE IN PREM USER CLASS
     private ArrayList<CryptoCurrency> currency_list = new ArrayList<CryptoCurrency>();

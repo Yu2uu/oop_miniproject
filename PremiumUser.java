@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class PremiumUser extends User {
+public class PremiumUser extends User{
 
     private String name; // might remove name from class
     // private ArrayList<String> information = new ArrayList<String>();   QUESTION BELOW
