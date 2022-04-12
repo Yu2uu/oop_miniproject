@@ -11,6 +11,8 @@ public class CurrencyApp extends Frame{
   private static TextArea infoArea = new TextArea("CyptoTrading App \n- Select a currency to veiw information about it \n - More information is avaialbe to premium users");
   private User current_user;
   private CryptoCurrency selected_coin;
+  private String username;
+  private String password;
   
   // Overriding print function to output text
   public void print(String text){
@@ -20,9 +22,9 @@ public class CurrencyApp extends Frame{
   /**  
    *  CHANGE CRYPTO APP NAME TO CURRENCY APP -- Done
    * 
-   * TODO ADD CURRENCY INFO INTO A OBJECT TO REDUCE LOAD TIMES, DO OVERRIDING AND INHERITANCE --
+   *  ADD CURRENCY INFO INTO A OBJECT TO REDUCE LOAD TIMES, DO OVERRIDING AND INHERITANCE -- Done
    * 
-   * TODO ADD BUTTONS UNDER OUTPUT WINDOW TO SELECT INFO WANTED
+   *  ADD BUTTONS UNDER OUTPUT WINDOW TO SELECT INFO WANTED -- Done
    * 
    *  ADD REFRESH BUTTON TO GET UP TO DATE INFO -- DONE
    * 
@@ -72,23 +74,23 @@ public class CurrencyApp extends Frame{
     return answer;
   }
 
-  public void add_currency(String ticker) {
+  public void addCurrency(String ticker) {
     CryptoCurrency new_coin = new CryptoCurrency(ticker.toUpperCase());
-    current_user.get_currencies_list().add(new_coin);
-    load_currencies();
+    current_user.getCurrencyList().add(new_coin);
+    loadCurrencies();
   }
 
-  public void load_currencies(){
+  public void loadCurrencies(){
     toolbar.removeAll();
-    for (int i = 0; i < current_user.get_currencies_list().size(); i++) {
+    for (int i = 0; i < current_user.getCurrencyList().size(); i++) {
       int currency_index = i; // needed for arraylist get as it needs a effectivly final varaible
-      Button currency = new Button(current_user.get_currencies_list().get(currency_index).get_currency_ticker());
+      Button currency = new Button(current_user.getCurrencyList().get(currency_index).getCurrencyTicker());
       currency.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent evt){
           // TODO replace coin name
-          CryptoCurrency coin = current_user.get_currencies_list().get(currency_index);
+          CryptoCurrency coin = current_user.getCurrencyList().get(currency_index);
           selected_coin = coin;
-          print("The currency is " + coin.get_name() + "\nSelect the options below for more information.");            
+          print("The currency is " + coin.getName() + "\nSelect the options below for more information.");            
         }
       });
       toolbar.add(currency);
@@ -104,33 +106,30 @@ public class CurrencyApp extends Frame{
     while(!(account_creation.equals("YES") || account_creation.equals("NO")));
     while(true){
       if (account_creation.equals("NO")){
-        String username = inputString("What is your username");
+        username = inputString("What is your username");
         if (FileIO.fileSearch("credentials.csv", username)){
           System.out.println("Sorry that username is already taken can you choose another");
           continue;
         } else {
-          current_user = new User(username);
-          String password =  hash(inputString("What is your password"));
+          password =  hash(inputString("What is your password"));
 
           // Keep asking for account type till valid response is entered
           do {account_type = inputString("What is your account type (normal/premium)");} 
           while (!(account_type.equals("normal") || account_type.equals("premium")));
 
-          String credentials = "\n Username: " + username + " Password: " + password + " Account Type: " + account_type;
+          String credentials = "\n Username: " + username + " Password: " + password + " Account-Type: " + account_type;
           FileIO.writeFile("credentials.csv", credentials);
           System.out.println("\nLogging in");
           break;
         }
       
       } else if (account_creation.equals("YES")) {
-        // Verify client details
-        String username = inputString("What is your username");
+        // Verify client details by searching credentials file for them
+        username = inputString("What is your username");
         if (FileIO.fileSearch("credentials.csv", username)){
-          String password = inputString("What is your password");
+          password = inputString("What is your password");
           if (FileIO.fileSearch("credentials.csv", username + " Password: " + hash(password))){
             System.out.println("Login successful");
-            current_user = new User(username);
-            // TODO sort out this user shit
             break;
           } else {
             System.out.println("Login unsuccessful");
@@ -140,11 +139,17 @@ public class CurrencyApp extends Frame{
         }
       }
     }
+
+    if (FileIO.fileSearch("credentials.csv", "Username: " + username + " Password: " + hash(password) + " Account-Type: premium")){
+      current_user = new PremiumUser(username);
+    } else {
+      current_user = new User(username);
+    }
     
     // Create initial buttons
-    current_user.add_currency(selected_coin = new CryptoCurrency("BTC")); // TODO PRBLM HERE
-    current_user.add_currency(new CryptoCurrency("ETH"));
-    current_user.add_currency(new CryptoCurrency("XRP"));
+    current_user.addCurrency(selected_coin = new CryptoCurrency("BTC")); // TODO PRBLM HERE
+    current_user.addCurrency(new CryptoCurrency("ETH"));
+    current_user.addCurrency(new CryptoCurrency("XRP"));
     
     toolbar = new Panel();
     toolbar.setLayout(new FlowLayout());
@@ -166,7 +171,7 @@ public class CurrencyApp extends Frame{
         acp.addSubmitListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {
               String inputString = field.getText();
-              add_currency(inputString);
+              addCurrency(inputString);
             }
           }
         );
@@ -175,12 +180,12 @@ public class CurrencyApp extends Frame{
     });
     this.add(addCurrencyButton);
 
-    load_currencies();
+    loadCurrencies();
 
     Button refresh = new Button("Refresh info");
     refresh.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent evt){
-          load_currencies();
+          loadCurrencies();
         }
     });
     this.add(refresh);
@@ -193,14 +198,16 @@ public class CurrencyApp extends Frame{
     info_panel.setLayout(new GridLayout(0,1));
     info_panel.setVisible(true);
     this.add(info_panel, BorderLayout.PAGE_END);
-    current_user.set_information();
-    for ( String information : current_user.get_information()){
+    
+    current_user.setInformation();
+
+    for ( String information : current_user.getInformation()){
       switch (information){
         case "price":
           Button price = new Button("Price");
           price.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
-              print("1 " + selected_coin.get_name() + " is equivalent to £" + selected_coin.get_price());
+              print("1 " + selected_coin.getName() + " is equivalent to £" + selected_coin.getPrice());
             }
           });
           info_panel.add(price);
@@ -209,7 +216,7 @@ public class CurrencyApp extends Frame{
           Button marketcap = new Button("Market cap");
           marketcap.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
-              print("The market cap of " + selected_coin.get_name() + " is currently " + selected_coin.get_marketcap());
+              print("The market cap of " + selected_coin.getName() + " is currently " + selected_coin.getMarketcap());
             }
           });
           info_panel.add(marketcap);
@@ -218,12 +225,38 @@ public class CurrencyApp extends Frame{
           Button supply = new Button("Circulating supply");
           supply.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
-              print("The current circulating supply of " + selected_coin.get_name() + " is currently " + selected_coin.get_circulating_supply());
+              print("The current circulating supply of " + selected_coin.getName() + " is currently " + selected_coin.getCirculatingSupply());
             }
           });
           info_panel.add(supply);
           break;
-
+        case "price_changes":
+          Button price_changes = new Button("Price Changes");
+          price_changes.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent evt){
+              print("The price of 1 " + selected_coin.getName() + " coin has changed by " + selected_coin.getCirculatingSupply() + " in the last hour");
+            }
+          });
+          info_panel.add(price_changes);
+          break;
+        case "marketcap_changes":
+          Button marketcap_changes = new Button("Marketcap Changes");
+          marketcap_changes.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent evt){
+              print("The market cap of" + selected_coin.getName() + " is " + selected_coin.getMarketcap());
+            }
+          });
+          info_panel.add(marketcap_changes);
+          break;
+        case "high":
+          Button high = new Button("High");
+          high.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent evt){
+              print("The highest price of 1 " + selected_coin.getName() + " of all time is £" + selected_coin.getHighest());
+            }
+          });
+          info_panel.add(high);
+          break;
       }
     }
 

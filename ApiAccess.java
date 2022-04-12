@@ -13,7 +13,7 @@ public class ApiAccess {
     private static String base_url = "https://api.nomics.com/v1/";
     private static String api_key = "f0de9f36e0316eea5b78c51093602a00b9a86976";
 
-    public static JSONObject send_request(String params) throws IOException, InterruptedException, JSONException{
+    public static JSONObject sendRequest(String params) throws IOException, InterruptedException, JSONException{
         // create a client
         var client = HttpClient.newHttpClient();
 

@@ -61,7 +61,7 @@ public class FileIO {
     // Search file for text 
     public static boolean fileSearch(String fileName, String search){
         String content = readFile(fileName);
-        return content.contains("Username: " + search + " ");
+        return content.contains(search);
     }
     
 

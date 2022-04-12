@@ -1,24 +1,6 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-// class gui{
-//     public static void main(String args[]){
-//        JFrame frame = new JFrame("My First GUI");
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setSize(900,600);
-//        JPanel panel1 = new JPanel();
-//        panel1.setLayout( new BorderLayout() );
-//        JPanel subPanel = new JPanel();
-//        JButton button1 = new JButton("Press");
-//        JButton button2 = new JButton("Stocks");
-//        subPanel.add(button1);
-//        subPanel.add(button2);  // Adds Button to content pane of frame
-//        panel1.add(subPanel, BorderLayout.PAGE_START);
-//        frame.getContentPane().add(panel1);
-//        frame.setVisible(true);
-//     }
-// }
 
 public class Window extends Frame{
 

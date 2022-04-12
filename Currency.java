@@ -7,25 +7,21 @@ public abstract class Currency {
     protected String name;
     protected Double price; // currencies price against GBP
     protected String marketcap; // currencies marketcap
-    protected String circulating_supply;
+    
 
-    public String get_name(){
+    public String getName(){
         return this.name;
     }
 
-    public String get_currency_ticker(){
+    public String getCurrencyTicker(){
         return this.currency_ticker;
     }
 
-    public Double get_price(){
+    public Double getPrice(){
         return this.price;
     }
 
-    public String get_marketcap(){
+    public String getMarketcap(){
         return this.marketcap;
-    }
-
-    public String get_circulating_supply(){
-        return this.circulating_supply;
     }
 }
