@@ -1,0 +1,3 @@
+# oop_miniproject
+Run the project by running the CurrencyApp file
+The information got from the cryptocurrency api isnt 100% accurate but its free so.....
