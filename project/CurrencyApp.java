@@ -8,7 +8,8 @@ import java.util.Scanner;
 public class CurrencyApp extends Frame{
   private Panel info_panel;
   private Panel toolbar;
-  private static TextArea infoArea = new TextArea("CyptoTrading App \n- Select a currency to veiw information about it \n - More information is avaialbe to premium users");
+  private Panel options;
+  private static TextArea infoArea = new TextArea("CyptoTrading App \n- Select a currency to veiw information about it \n - More information is avaialbe to premium users",10 , 60 , TextArea.SCROLLBARS_NONE);
   private User current_user;
   private CryptoCurrency selected_coin;
   private String username;
@@ -93,6 +94,7 @@ public class CurrencyApp extends Frame{
           print("The currency is " + coin.getName() + "\nSelect the options below for more information.");            
         }
       });
+      //TODO currency.setBackground(new Color(217, 212, 217));
       toolbar.add(currency);
     }
     this.setVisible(true); 
@@ -152,9 +154,13 @@ public class CurrencyApp extends Frame{
     current_user.addCurrency(new CryptoCurrency("XRP"));
     
     toolbar = new Panel();
+    options = new Panel();
     toolbar.setLayout(new FlowLayout());
     toolbar.setVisible(true);
+    options.setBackground(new Color(  210, 205, 234  ));
+    toolbar.setBackground(new Color( 210, 205, 234 ));
     this.add(toolbar);
+    this.add(options);
 
     Button addCurrencyButton=new Button("Add Crypto Currency");
     addCurrencyButton.addActionListener(new ActionListener(){
@@ -178,7 +184,7 @@ public class CurrencyApp extends Frame{
         acp.activate();
       }
     });
-    this.add(addCurrencyButton);
+    options.add(addCurrencyButton);
 
     loadCurrencies();
 
@@ -188,10 +194,10 @@ public class CurrencyApp extends Frame{
           loadCurrencies();
         }
     });
-    this.add(refresh);
+    options.add(refresh);
 
     infoArea.setEditable(false);
-    this.add(infoArea,  BorderLayout.PAGE_END);	
+    this.add(infoArea, BorderLayout.PAGE_END);	
 
     // Info buttons panel
     info_panel = new Panel();
@@ -200,11 +206,12 @@ public class CurrencyApp extends Frame{
     this.add(info_panel, BorderLayout.PAGE_END);
     
     current_user.setInformation();
-
+    Color buttonColor = new Color(255,255,0);
     for ( String information : current_user.getInformation()){
       switch (information){
         case "price":
           Button price = new Button("Price");
+          price.setBackground(buttonColor);
           price.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
               print("1 " + selected_coin.getName() + " is equivalent to £" + selected_coin.getPrice());
@@ -214,6 +221,7 @@ public class CurrencyApp extends Frame{
           break;
         case "marketcap":
           Button marketcap = new Button("Market cap");
+          marketcap.setBackground(buttonColor);
           marketcap.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
               print("The market cap of " + selected_coin.getName() + " is currently " + selected_coin.getMarketcap());
@@ -223,6 +231,7 @@ public class CurrencyApp extends Frame{
           break;
         case "circulating_supply":
           Button supply = new Button("Circulating supply");
+          supply.setBackground(buttonColor);
           supply.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
               print("The current circulating supply of " + selected_coin.getName() + " is currently " + selected_coin.getCirculatingSupply());
@@ -232,6 +241,7 @@ public class CurrencyApp extends Frame{
           break;
         case "price_changes":
           Button price_changes = new Button("Price Changes");
+          price_changes.setBackground(buttonColor);
           price_changes.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
               print("The price of 1 " + selected_coin.getName() + " coin has changed by " + selected_coin.getCirculatingSupply() + " in the last hour");
@@ -241,15 +251,17 @@ public class CurrencyApp extends Frame{
           break;
         case "marketcap_changes":
           Button marketcap_changes = new Button("Marketcap Changes");
+          marketcap_changes.setBackground(buttonColor);
           marketcap_changes.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
-              print("The market cap of" + selected_coin.getName() + " is " + selected_coin.getMarketcap());
+              print("The market cap of " + selected_coin.getName() + " is " + selected_coin.getMarketcap());
             }
           });
           info_panel.add(marketcap_changes);
           break;
         case "high":
           Button high = new Button("High");
+          high.setBackground(buttonColor);
           high.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
               print("The highest price of 1 " + selected_coin.getName() + " of all time is £" + selected_coin.getHighest());
@@ -259,7 +271,8 @@ public class CurrencyApp extends Frame{
           break;
       }
     }
-
+    // 242,242,242
+		this.setBackground(new Color(217, 212, 217));
     WindowCloser wc = new WindowCloser();
     this.addWindowListener(wc);
     this.setSize(600,500);

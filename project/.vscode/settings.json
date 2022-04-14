@@ -3,6 +3,6 @@
         "."
     ],
     "java.project.referencedLibraries": [
-        "org.json-chargebee-1.0.jar"
+        "org.json.jar"
     ]
 }
