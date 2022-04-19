@@ -29,6 +29,7 @@ public class CryptoCurrency extends Currency{
                 this.marketcap = data.getString("market_cap"); 
                 this.circulating_supply = data.getString("circulating_supply");
                 this.highest = data.getString("high");
+                this.priceChange = data.getJSONObject("1h").getString("price_change");
                 break;
             } 
             catch (IOException | InterruptedException e) {

@@ -9,7 +9,7 @@ public class CurrencyApp extends Frame{
   private Panel info_panel;
   private Panel toolbar;
   private Panel options;
-  private static TextArea infoArea = new TextArea("CyptoTrading App \n- Select a currency to veiw information about it \n - More information is avaialbe to premium users",10 , 60 , TextArea.SCROLLBARS_NONE);
+  private static TextArea infoArea = new TextArea("CyptoTrading App \n- Select a currency to veiw information about it \n - More information is avaialbe to premium users",10 , 35 , TextArea.SCROLLBARS_NONE);
   private User current_user;
   private CryptoCurrency selected_coin;
   private String username;
@@ -38,6 +38,8 @@ public class CurrencyApp extends Frame{
    *  RENAME CLASSES TO FOLLOW GUIDLINES -- Done
    * 
    *  HANDLE EXCEPTIONS -- Done
+   * 
+   * TODO ADD NEW INFO BUTTON NORMAL ACCOUNT
    * 
    * TODO HANDLE EXCEPTION FOR INCORRECT ADDED CURRENCY
    * 
@@ -94,193 +96,249 @@ public class CurrencyApp extends Frame{
           print("The currency is " + coin.getName() + "\nSelect the options below for more information.");            
         }
       });
-      //TODO currency.setBackground(new Color(217, 212, 217));
       toolbar.add(currency);
     }
     this.setVisible(true); 
   }
   
   public CurrencyApp(){
+
     this.setLayout(new FlowLayout());
-
-    String account_creation, account_type = "";
-    do {account_creation = inputString("Do you have a account with us? \n Input Yes or No").toUpperCase();}
-    while(!(account_creation.equals("YES") || account_creation.equals("NO")));
-    while(true){
-      if (account_creation.equals("NO")){
-        username = inputString("What is your username");
-        if (FileIO.fileSearch("credentials.csv", username)){
-          System.out.println("Sorry that username is already taken can you choose another");
-          continue;
-        } else {
-          password =  hash(inputString("What is your password"));
-
-          // Keep asking for account type till valid response is entered
-          do {account_type = inputString("What is your account type (normal/premium)");} 
-          while (!(account_type.equals("normal") || account_type.equals("premium")));
-
-          String credentials = "\n Username: " + username + " Password: " + password + " Account-Type: " + account_type;
-          FileIO.writeFile("credentials.csv", credentials);
-          System.out.println("\nLogging in");
-          break;
-        }
-      
-      } else if (account_creation.equals("YES")) {
-        // Verify client details by searching credentials file for them
-        username = inputString("What is your username");
-        if (FileIO.fileSearch("credentials.csv", username)){
-          password = inputString("What is your password");
-          if (FileIO.fileSearch("credentials.csv", username + " Password: " + hash(password))){
-            System.out.println("Login successful");
-            break;
+    
+    TextArea outputWindow = new TextArea("Login here, Click the new account button to create a new account.",2 , 18 , TextArea.SCROLLBARS_NONE);
+    outputWindow.setEditable(false);
+    outputWindow.setFont(new Font("Monospaced", Font.BOLD, 14));
+    Login acp = new Login();
+    Label banner = new Label(" Username");
+    TextField usernamefield = new TextField(10); 
+    Label empty = new Label(" Password"); 
+    TextField passwordfield = new TextField(10); 
+    acp.add(outputWindow);
+    acp.add(banner);
+    acp.add(usernamefield);
+    acp.add(empty); 
+    acp.add(passwordfield);
+    Button login = new Button("Login");
+		login.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+        username = usernamefield.getText();
+        password = passwordfield.getText();
+        usernamefield.setText("");
+        passwordfield.setText("");
+        if (FileIO.fileSearch("credentials.csv", username) ) {
+          if (FileIO.fileSearch("credentials.csv", username + " Password: " + hash(password)) && (!username.equals(""))){
+            outputWindow.setText("Logging in...");
+            successfulLogin();
+            acp.closeWindow();
           } else {
-            System.out.println("Login unsuccessful");
+            outputWindow.setText("Login unsuccessful");
           }
         } else {
-          System.out.println("Sorry that username was not found, please retry");
+          outputWindow.setText("Sorry that username was not found, please retry");
         }
-      }
-    }
-
-    if (FileIO.fileSearch("credentials.csv", "Username: " + username + " Password: " + hash(password) + " Account-Type: premium")){
-      current_user = new PremiumUser(username);
-    } else {
-      current_user = new User(username);
-    }
-    
-    // Create initial buttons
-    current_user.addCurrency(selected_coin = new CryptoCurrency("BTC")); // TODO PRBLM HERE
-    current_user.addCurrency(new CryptoCurrency("ETH"));
-    current_user.addCurrency(new CryptoCurrency("XRP"));
-    
-    toolbar = new Panel();
-    options = new Panel();
-    toolbar.setLayout(new FlowLayout());
-    toolbar.setVisible(true);
-    options.setBackground(new Color(  210, 205, 234  ));
-    toolbar.setBackground(new Color( 210, 205, 234 ));
-    this.add(toolbar);
-    this.add(options);
-
-    Button addCurrencyButton=new Button("Add Crypto Currency");
-    addCurrencyButton.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent evt) {		
-        Prompt acp = new Prompt();
-        Label banner = new Label("Input currency ticker (eg BNB, LANA)");
-        TextField field = new TextField(); 
-        Label empty = new Label(""); 
-        // acp.setLayout(new FlowLayout());
-        acp.setSize(300,200);
-        acp.add(banner);
-        acp.add(empty); 
-        acp.add(field);
-        acp.addSubmitListener(new ActionListener(){
-            public void actionPerformed(ActionEvent evt) {
-              String inputString = field.getText();
-              addCurrency(inputString);
+			}
+		});
+    acp.add(login);
+    // String account_type = "";
+    Button newAccount = new Button("New Account");
+		newAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+        TextArea outputArea = new TextArea("Create account below, the account type options are normal and premium",2 , 18 , TextArea.SCROLLBARS_NONE);
+        outputArea.setEditable(false);
+        outputArea.setFont(new Font("Monospaced", Font.BOLD, 14));
+        Login createAccount = new Login();
+        Label userLabel = new Label(" Username ");
+        TextField usernameCreation = new TextField(10); 
+        Label passLabel = new Label(" Password "); 
+        TextField passwordCreation = new TextField(10); 
+        Label accountLabel = new Label(" Account "); 
+        TextField AccountType = new TextField(10); 
+        createAccount.add(outputArea);
+        createAccount.add(userLabel);
+        createAccount.add(usernameCreation);
+        createAccount.add(passLabel); 
+        createAccount.add(passwordCreation);
+        createAccount.add(accountLabel);
+        createAccount.add(AccountType);
+        Button newAccount = new Button("Create account");
+		    newAccount.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            username = usernameCreation.getText();
+            password = passwordCreation.getText();
+            String account_type = AccountType.getText();
+            if (FileIO.fileSearch("credentials.csv", username)){
+              outputArea.setText("Sorry that username is already taken can you choose another");
+            } else if (password.isEmpty()){
+              outputArea.setText("Password field empty, Please enter a value");
+            } else if (account_type.equals("normal") || account_type.equals("premium")){  
+              // Keep asking for account type till valid response is entered
+              String credentials = "\n Username: " + username + " Password: " + hash(password) + " Account-Type: " + account_type;
+              FileIO.writeFile("credentials.csv", credentials);
+              outputArea.setText("Account created successfully");
+              createAccount.closeWindow();
+            } else {
+              outputArea.setText("Please choose a correct account type");
             }
+          
           }
-        );
-        acp.activate();
+        });
+        createAccount.add(newAccount);
+        createAccount.activate();
+
+
       }
-    });
-    options.add(addCurrencyButton);
+			
+		});
+    acp.add(newAccount);
 
-    loadCurrencies();
 
-    Button refresh = new Button("Refresh info");
-    refresh.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent evt){
-          loadCurrencies();
-        }
-    });
-    options.add(refresh);
-
-    infoArea.setEditable(false);
-    this.add(infoArea, BorderLayout.PAGE_END);	
-
-    // Info buttons panel
-    info_panel = new Panel();
-    info_panel.setLayout(new GridLayout(0,1));
-    info_panel.setVisible(true);
-    this.add(info_panel, BorderLayout.PAGE_END);
+    acp.activate();
     
-    current_user.setInformation();
-    Color buttonColor = new Color(255,255,0);
-    for ( String information : current_user.getInformation()){
-      switch (information){
-        case "price":
-          Button price = new Button("Price");
-          price.setBackground(buttonColor);
-          price.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-              print("1 " + selected_coin.getName() + " is equivalent to £" + selected_coin.getPrice());
-            }
-          });
-          info_panel.add(price);
-          break;
-        case "marketcap":
-          Button marketcap = new Button("Market cap");
-          marketcap.setBackground(buttonColor);
-          marketcap.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-              print("The market cap of " + selected_coin.getName() + " is currently " + selected_coin.getMarketcap());
-            }
-          });
-          info_panel.add(marketcap);
-          break;
-        case "circulating_supply":
-          Button supply = new Button("Circulating supply");
-          supply.setBackground(buttonColor);
-          supply.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-              print("The current circulating supply of " + selected_coin.getName() + " is currently " + selected_coin.getCirculatingSupply());
-            }
-          });
-          info_panel.add(supply);
-          break;
-        case "price_changes":
-          Button price_changes = new Button("Price Changes");
-          price_changes.setBackground(buttonColor);
-          price_changes.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-              print("The price of 1 " + selected_coin.getName() + " coin has changed by " + selected_coin.getCirculatingSupply() + " in the last hour");
-            }
-          });
-          info_panel.add(price_changes);
-          break;
-        case "marketcap_changes":
-          Button marketcap_changes = new Button("Marketcap Changes");
-          marketcap_changes.setBackground(buttonColor);
-          marketcap_changes.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-              print("The market cap of " + selected_coin.getName() + " is " + selected_coin.getMarketcap());
-            }
-          });
-          info_panel.add(marketcap_changes);
-          break;
-        case "high":
-          Button high = new Button("High");
-          high.setBackground(buttonColor);
-          high.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-              print("The highest price of 1 " + selected_coin.getName() + " of all time is £" + selected_coin.getHighest());
-            }
-          });
-          info_panel.add(high);
-          break;
-      }
-    }
-    // 242,242,242
-		this.setBackground(new Color(217, 212, 217));
-    WindowCloser wc = new WindowCloser();
-    this.addWindowListener(wc);
-    this.setSize(600,500);
-    this.setLocationRelativeTo(null); // Centers the window on the screen
-    this.setVisible(true);
-
   }
 
+public void successfulLogin(){
+
+  // polymorphism below
+  if (FileIO.fileSearch("credentials.csv", "Username: " + username + " Password: " + hash(password) + " Account-Type: premium")){
+    current_user = new PremiumUser(username);
+  } else {
+    current_user = new User(username);
+  }
+  
+  // Create initial buttons
+  current_user.addCurrency(selected_coin = new CryptoCurrency("BTC")); // TODO PRBLM HERE
+  current_user.addCurrency(new CryptoCurrency("ETH"));
+  current_user.addCurrency(new CryptoCurrency("XRP"));
+  
+  toolbar = new Panel();
+  options = new Panel();
+  toolbar.setLayout(new FlowLayout());
+  toolbar.setVisible(true);
+  options.setBackground(new Color(  210, 205, 234  ));
+  toolbar.setBackground(new Color( 210, 205, 234 ));
+  this.add(toolbar);
+  this.add(options);
+
+  Button addCurrencyButton=new Button("Add Crypto Currency");
+  addCurrencyButton.addActionListener(new ActionListener(){
+    public void actionPerformed(ActionEvent evt) {		
+      Prompt acp = new Prompt();
+      Label banner = new Label("Input currency ticker (eg BNB, ADA)");
+      TextField field = new TextField(); 
+      Label empty = new Label(""); 
+      acp.setSize(300,200);
+      acp.add(banner);
+      acp.add(empty); 
+      acp.add(field);
+      acp.addSubmitListener(new ActionListener(){
+          public void actionPerformed(ActionEvent evt) {
+            String inputString = field.getText();
+            addCurrency(inputString);
+          }
+        }
+      );
+      acp.activate();
+    }
+  });
+  options.add(addCurrencyButton);
+
+  loadCurrencies();
+
+  Button refresh = new Button("Refresh info");
+  refresh.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent evt){
+        loadCurrencies();
+      }
+  });
+  options.add(refresh);
+
+  infoArea.setEditable(false);
+  infoArea.setFont(new Font("SansSerif", Font.BOLD, 20));
+
+  this.add(infoArea, BorderLayout.PAGE_END);	
+
+  // Info buttons panel
+  info_panel = new Panel();
+  info_panel.setLayout(new GridLayout(0,2, 10, 10));
+  info_panel.setBackground(new Color(217, 212, 217));
+  info_panel.setVisible(true);
+  this.add(info_panel, BorderLayout.PAGE_END);
+  
+  current_user.setInformation();
+  Color buttonColor = new Color(255, 237, 217);
+  for ( String information : current_user.getInformation()){
+    switch (information){
+      case "price":
+        Button price = new Button("Price");
+        price.setBackground(buttonColor);
+        price.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent evt){
+            print("1 " + selected_coin.getName() + " is equivalent to £" + selected_coin.getPrice());
+          }
+        });
+        info_panel.add(price);
+        break;
+      case "marketcap":
+        Button marketcap = new Button("Market cap");
+        marketcap.setBackground(buttonColor);
+        marketcap.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent evt){
+            print("The market cap of " + selected_coin.getName() + " is currently " + selected_coin.getMarketcap());
+          }
+        });
+        info_panel.add(marketcap);
+        break;
+      case "circulating_supply":
+        Button supply = new Button("Circulating supply");
+        supply.setBackground(buttonColor);
+        supply.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent evt){
+            print("The current circulating supply of " + selected_coin.getName() + " is currently " + selected_coin.getCirculatingSupply());
+          }
+        });
+        info_panel.add(supply);
+        break;
+      case "price_changes":
+        Button price_changes = new Button("Price Changes");
+        price_changes.setBackground(buttonColor);
+        price_changes.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent evt){
+            print("The price of 1 " + selected_coin.getName() + " coin has changed by " + selected_coin.getPriceChange() + " in the last hour");
+          }
+        });
+        info_panel.add(price_changes);
+        break;
+      case "marketcap_changes":
+        Button marketcap_changes = new Button("Marketcap Changes");
+        marketcap_changes.setBackground(buttonColor);
+        marketcap_changes.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent evt){
+            print("The market cap of " + selected_coin.getName() + " is " + selected_coin.getMarketcap());
+          }
+        });
+        info_panel.add(marketcap_changes);
+        break;
+      case "high":
+        Button high = new Button("High");
+        high.setBackground(buttonColor);
+        high.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent evt){
+            print("The highest price of 1 " + selected_coin.getName() + " of all time is £" + selected_coin.getHighest());
+          }
+        });
+        info_panel.add(high);
+        break;
+    }
+  }
+  this.setBackground(new Color(217, 212, 217));
+  WindowCloser wc = new WindowCloser();
+  this.addWindowListener(wc);
+  this.setSize(600,500);
+  this.setLocationRelativeTo(null); // Centers the window on the screen
+  this.setVisible(true);
+
+}
+  
   public static void main(String[] args){
 		new CurrencyApp();
   }

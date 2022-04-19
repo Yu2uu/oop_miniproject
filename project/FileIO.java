@@ -51,10 +51,8 @@ public class FileIO{
             FileWriter myWriter = new FileWriter(fileName, true);
             myWriter.write(Data);
             myWriter.close();
-            System.out.println("Successfully saved");
         } catch (IOException ex) {
-            System.out.println("An error has occurred");
-            ex.printStackTrace();
+            System.out.println("An error has occurred writing to file.");
         }
     }
 

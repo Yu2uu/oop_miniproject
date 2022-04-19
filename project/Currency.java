@@ -7,6 +7,7 @@ public abstract class Currency{
     protected String name;
     protected Double price; // currencies price against GBP
     protected String marketcap; // currencies marketcap
+    protected String priceChange;
     
 
     public String getName(){
@@ -23,5 +24,9 @@ public abstract class Currency{
 
     public String getMarketcap(){
         return this.marketcap;
+    }
+
+    public String getPriceChange(){
+        return this.priceChange;
     }
 }
