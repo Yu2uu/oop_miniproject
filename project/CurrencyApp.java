@@ -304,7 +304,7 @@ public void successfulLogin(){
         high.setBackground(buttonColor);
         high.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent evt){
-            print("The highest price of 1 " + selected_coin.getName() + " of all time is £" + selected_coin.getHighest());
+            print("The highest price of 1 " + selected_coin.getName() + " of all time is \u00A3" + selected_coin.getHighest());
           }
         });
         info_panel.add(high);
