@@ -16,7 +16,7 @@ public class FileIO{
                 System.out.println("File already exists.");
             }
         } catch (IOException e) {
-            System.out.println("An error has occurred");
+            System.out.println("An error has occurred during file creation");
             e.printStackTrace();
         }
     }   
@@ -36,7 +36,7 @@ public class FileIO{
             }
             scanner.close();
         } catch (FileNotFoundException ex) {
-            System.out.println("An error has occurred");
+            System.out.println("An error has occurred while trying to read file");
             ex.printStackTrace();
         }
         return content;

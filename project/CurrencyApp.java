@@ -21,23 +21,8 @@ public class CurrencyApp extends Frame{
   }  
 
   /**  
-   *  CHANGE CRYPTO APP NAME TO CURRENCY APP -- Done
-   * 
-   *  ADD CURRENCY INFO INTO A OBJECT TO REDUCE LOAD TIMES, DO OVERRIDING AND INHERITANCE -- Done
-   * 
-   *  ADD BUTTONS UNDER OUTPUT WINDOW TO SELECT INFO WANTED -- Done
-   * 
-   *  ADD REFRESH BUTTON TO GET UP TO DATE INFO -- DONE
-   * 
-   *  MAYBE MAKE IT SO ONLY ONE BUTTON IS NEEDED AND IS LOOPED THROUGH FOR ALL CURRENCIES -- Done
-   * 
-   *  ADD A ADD CURRENCY BUTTON -- Done
    * 
    * TODO ADD VALIDATION TO ADD CURRENCY BUTTON
-   * 
-   *  RENAME CLASSES TO FOLLOW GUIDLINES -- Done
-   * 
-   *  HANDLE EXCEPTIONS -- Done
    * 
    * TODO ADD NEW INFO BUTTON NORMAL ACCOUNT
    * 
@@ -104,96 +89,88 @@ public class CurrencyApp extends Frame{
   public CurrencyApp(){
 
     this.setLayout(new FlowLayout());
-    
-    TextArea outputWindow = new TextArea("Login here, Click the new account button to create a new account.",2 , 18 , TextArea.SCROLLBARS_NONE);
-    outputWindow.setEditable(false);
-    outputWindow.setFont(new Font("Monospaced", Font.BOLD, 14));
-    Login acp = new Login();
-    Label banner = new Label(" Username");
-    TextField usernamefield = new TextField(10); 
-    Label empty = new Label(" Password"); 
-    TextField passwordfield = new TextField(10); 
-    acp.add(outputWindow);
-    acp.add(banner);
-    acp.add(usernamefield);
-    acp.add(empty); 
-    acp.add(passwordfield);
+    TextArea outputConsole = new TextArea("Login here, Click the new account button to create a new account.",2 , 18 , TextArea.SCROLLBARS_NONE);
+    outputConsole.setEditable(false);
+    outputConsole.setFont(new Font("Monospaced", Font.BOLD, 14));
+    Login loginWindow = new Login();
+    Label usernameLabel = new Label(" Username");
+    TextField usernameField = new TextField(10); 
+    Label passwordLabel = new Label(" Password"); 
+    TextField passwordField = new TextField(10); 
+    loginWindow.add(outputConsole);
+    loginWindow.add(usernameLabel);
+    loginWindow.add(usernameField);
+    loginWindow.add(passwordLabel); 
+    loginWindow.add(passwordField);
+    loginWindow.setTitle("Login");
     Button login = new Button("Login");
 		login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-        username = usernamefield.getText();
-        password = passwordfield.getText();
-        usernamefield.setText("");
-        passwordfield.setText("");
+        username = usernameField.getText();
+        password = passwordField.getText();
+        usernameField.setText("");
+        passwordField.setText("");
         if (FileIO.fileSearch("credentials.csv", username) ) {
           if (FileIO.fileSearch("credentials.csv", username + " Password: " + hash(password)) && (!username.equals(""))){
-            outputWindow.setText("Logging in...");
+            outputConsole.setText("Logging in...");
             successfulLogin();
-            acp.closeWindow();
+            loginWindow.closeWindow();
           } else {
-            outputWindow.setText("Login unsuccessful");
+            outputConsole.setText("Login unsuccessful");
           }
         } else {
-          outputWindow.setText("Sorry that username was not found, please retry");
+          outputConsole.setText("Sorry that username was not found, please retry");
         }
 			}
 		});
-    acp.add(login);
-    // String account_type = "";
-    Button newAccount = new Button("New Account");
-		newAccount.addActionListener(new ActionListener() {
+    loginWindow.add(login);
+    Button newAccountBtn = new Button("New Account");
+		newAccountBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
         TextArea outputArea = new TextArea("Create account below, the account type options are normal and premium",2 , 18 , TextArea.SCROLLBARS_NONE);
         outputArea.setEditable(false);
         outputArea.setFont(new Font("Monospaced", Font.BOLD, 14));
         Login createAccount = new Login();
         Label userLabel = new Label(" Username ");
-        TextField usernameCreation = new TextField(10); 
+        TextField newUsernameField = new TextField(10); 
         Label passLabel = new Label(" Password "); 
-        TextField passwordCreation = new TextField(10); 
+        TextField newPasswordField = new TextField(10); 
         Label accountLabel = new Label(" Account "); 
-        TextField AccountType = new TextField(10); 
+        TextField accountTypeField = new TextField(10); 
         createAccount.add(outputArea);
         createAccount.add(userLabel);
-        createAccount.add(usernameCreation);
+        createAccount.add(newUsernameField);
         createAccount.add(passLabel); 
-        createAccount.add(passwordCreation);
+        createAccount.add(newPasswordField);
         createAccount.add(accountLabel);
-        createAccount.add(AccountType);
+        createAccount.add(accountTypeField);
         Button newAccount = new Button("Create account");
 		    newAccount.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            username = usernameCreation.getText();
-            password = passwordCreation.getText();
-            String account_type = AccountType.getText();
+            username = newUsernameField.getText();
+            password = newPasswordField.getText();
+            String accountType = accountTypeField.getText();
             if (FileIO.fileSearch("credentials.csv", username)){
               outputArea.setText("Sorry that username is already taken can you choose another");
             } else if (password.isEmpty()){
               outputArea.setText("Password field empty, Please enter a value");
-            } else if (account_type.equals("normal") || account_type.equals("premium")){  
+            } else if (accountType.equals("normal") || accountType.equals("premium")){  
               // Keep asking for account type till valid response is entered
-              String credentials = "\n Username: " + username + " Password: " + hash(password) + " Account-Type: " + account_type;
+              String credentials = "\n Username: " + username + " Password: " + hash(password) + " Account-Type: " + accountType;
               FileIO.writeFile("credentials.csv", credentials);
               outputArea.setText("Account created successfully");
               createAccount.closeWindow();
             } else {
               outputArea.setText("Please choose a correct account type");
             }
-          
           }
         });
         createAccount.add(newAccount);
         createAccount.activate();
-
-
       }
-			
 		});
-    acp.add(newAccount);
-
-
-    acp.activate();
-    
+    loginWindow.add(newAccountBtn);
+    loginWindow.activate();
   }
 
 public void successfulLogin(){
@@ -206,10 +183,11 @@ public void successfulLogin(){
   }
   
   // Create initial buttons
-  current_user.addCurrency(selected_coin = new CryptoCurrency("BTC")); // TODO PRBLM HERE
+  current_user.addCurrency(selected_coin = new CryptoCurrency("BTC"));
   current_user.addCurrency(new CryptoCurrency("ETH"));
   current_user.addCurrency(new CryptoCurrency("XRP"));
   
+  // create main window
   toolbar = new Panel();
   options = new Panel();
   toolbar.setLayout(new FlowLayout());
@@ -219,31 +197,33 @@ public void successfulLogin(){
   this.add(toolbar);
   this.add(options);
 
-  Button addCurrencyButton=new Button("Add Crypto Currency");
-  addCurrencyButton.addActionListener(new ActionListener(){
+  Button addCurrencyBtn=new Button("Add Crypto Currency");
+  addCurrencyBtn.addActionListener(new ActionListener(){
     public void actionPerformed(ActionEvent evt) {		
-      Prompt acp = new Prompt();
-      Label banner = new Label("Input currency ticker (eg BNB, ADA)");
-      TextField field = new TextField(); 
+      Prompt addCurrencyWindow = new Prompt();
+      Label tickerLabel = new Label("Input currency ticker (eg BNB, ADA)");
+      TextField inputTicker = new TextField(); 
       Label empty = new Label(""); 
-      acp.setSize(300,200);
-      acp.add(banner);
-      acp.add(empty); 
-      acp.add(field);
-      acp.addSubmitListener(new ActionListener(){
+      addCurrencyWindow.setSize(300,200);
+      addCurrencyWindow.add(tickerLabel);
+      addCurrencyWindow.add(empty); 
+      addCurrencyWindow.add(inputTicker);
+      addCurrencyWindow.addSubmitListener(new ActionListener(){
           public void actionPerformed(ActionEvent evt) {
-            String inputString = field.getText();
+            String inputString = inputTicker.getText();
             addCurrency(inputString);
           }
         }
       );
-      acp.activate();
+      addCurrencyWindow.activate();
     }
   });
-  options.add(addCurrencyButton);
+  options.add(addCurrencyBtn);
 
+  // Load in currencies
   loadCurrencies();
 
+  // Update buttons to contain latest info
   Button refresh = new Button("Refresh info");
   refresh.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent evt){
@@ -254,10 +234,9 @@ public void successfulLogin(){
 
   infoArea.setEditable(false);
   infoArea.setFont(new Font("SansSerif", Font.BOLD, 20));
-
   this.add(infoArea, BorderLayout.PAGE_END);	
 
-  // Info buttons panel
+  // Information buttons panel
   info_panel = new Panel();
   info_panel.setLayout(new GridLayout(0,2, 10, 10));
   info_panel.setBackground(new Color(217, 212, 217));
@@ -266,6 +245,8 @@ public void successfulLogin(){
   
   current_user.setInformation();
   Color buttonColor = new Color(255, 237, 217);
+
+  // THis is a function to create buttons depending on an arraylist
   for ( String information : current_user.getInformation()){
     switch (information){
       case "price":
@@ -273,7 +254,7 @@ public void successfulLogin(){
         price.setBackground(buttonColor);
         price.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent evt){
-            print("1 " + selected_coin.getName() + " is equivalent to £" + selected_coin.getPrice());
+            print("1 " + selected_coin.getName() + " is equivalent to \u00A3" + selected_coin.getPrice());
           }
         });
         info_panel.add(price);
@@ -330,6 +311,7 @@ public void successfulLogin(){
         break;
     }
   }
+  this.setTitle("Currency App");
   this.setBackground(new Color(217, 212, 217));
   WindowCloser wc = new WindowCloser();
   this.addWindowListener(wc);
